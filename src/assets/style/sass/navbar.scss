@@ -1,0 +1,20 @@
+.navbar-header {
+  @apply flex justify-between items-center m-5;
+  .navbar-button {
+    @apply p-2 rounded-lg text-black-200 font-semibold;
+  }
+  .plus-icon {
+    @apply text-white w-5;
+  }
+  .create-button {
+    @apply flex justify-between items-center rounded-lg bg-black-200 text-white p-2  hover:shadow-lg transition-all duration-300 ease-in-out;
+  }
+
+  .btn-text {
+    @apply text-lg px-2;
+  }
+}
+
+.CoLoR {
+  @apply h-dvh bg-gradient-to-r from-[#E9E9E9] to-[#F6F6F6];
+}
