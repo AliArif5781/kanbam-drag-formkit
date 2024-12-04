@@ -153,6 +153,7 @@ const HeroSection = () => {
             <div
               key={index}
               className="bg-white shadow-lg rounded-lg transform transition-all hover:shadow-2xl duration-300"
+              onClick={() => navigateProjectToTask(eachProject.id)}
             >
               <div className="max-h-[200px] overflow-y-auto p-6 capitalize">
                 <h1 className="text-xl font-semibold text-gray-800 mb-4">
@@ -162,14 +163,11 @@ const HeroSection = () => {
                   <p>{eachProject.description}</p>
                 </div>
               </div>
-              <div className="px-6  flex justify-end">
-                <button
-                  className="bg-black-200 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black-50 transition-colors duration-200 my-3"
-                  onClick={() => navigateProjectToTask(eachProject.id)}
-                >
+              {/* <div className="px-6  flex justify-end">
+                <button className="bg-black-200 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-black-50 transition-colors duration-200 my-3">
                   View Details
                 </button>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>
