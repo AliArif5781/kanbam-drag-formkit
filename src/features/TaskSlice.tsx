@@ -54,6 +54,15 @@ export const TaskSlice = createSlice({
         localStorage.setItem("task", JSON.stringify(state.tasks));
       }
     },
+    updateTask: (state, action: PayloadAction<Task>) => {
+      const index = state.tasks.findIndex(
+        (task) => task.newID === action.payload.newID
+      );
+      if (index !== -1) {
+        state.tasks[index] = action.payload; // Update task in the array
+      }
+      localStorage.setItem("task", JSON.stringify(state.tasks)); // Persist changes to localStorage
+    },
   },
   extraReducers: (builder) => {
     // On app load, load tasks from localStorage if available
