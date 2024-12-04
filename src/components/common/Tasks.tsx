@@ -15,12 +15,9 @@ const Tasks = ({ title, description, priority, newID }: any) => {
   };
 
   const handleDelete = (newID: any) => {
-    dispatch(deleteTask(newID)); // Dispatch delete action with the task's newID
+    dispatch(deleteTask(newID));
   };
 
-  // const handleDelete = () => {
-  //   console.log("click");
-  // };
   return (
     <div
       className="border bg-white rounded mt-2 p-2 cursor-grab"
