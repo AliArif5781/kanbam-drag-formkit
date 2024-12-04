@@ -1,5 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+/*
+now i want the drag and drop feature in this code user can only drag the filteredTask and move ony in draft , inprogress and done section also add re-order system if we have one task in draft and one in done if we want drag task from draft to done they set in order
+ */
 // Define Task status type
 export type TaskStatus = "Normal" | "Medium" | "High";
 
@@ -8,6 +11,8 @@ interface Task {
   title: string;
   description: string;
   priority: TaskStatus;
+  iD: string;
+  newID: number;
 }
 
 interface TaskState {
@@ -43,6 +48,12 @@ export const TaskSlice = createSlice({
     setTasksFromLocalStorage: (state, action: PayloadAction<Task[]>) => {
       state.tasks = action.payload;
     },
+    deleteTask: (state, action: PayloadAction<number>) => {
+      state.tasks = state.tasks.filter((task) => task.newID !== action.payload);
+      if (action.payload) {
+        localStorage.setItem("task", JSON.stringify(state.tasks));
+      }
+    },
   },
   extraReducers: (builder) => {
     // On app load, load tasks from localStorage if available
@@ -62,6 +73,7 @@ export const {
   setPriority,
   addTask,
   setTasksFromLocalStorage,
+  deleteTask,
 } = TaskSlice.actions;
 
 export default TaskSlice.reducer;
