@@ -82,6 +82,7 @@ const Navbar = () => {
       console.log(newTask.newID, "newTask.iD");
 
       dispatch(addTask(newTask));
+
       const updatedTasks = [...tasks, newTask];
 
       localStorage.setItem("task", JSON.stringify(updatedTasks));
