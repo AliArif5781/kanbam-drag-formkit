@@ -21,6 +21,8 @@ const TasksGroup = ({ tasks, title, status, onDragEnd }: TasksGroupProps) => {
 
     selectedClass: "bg-blue-500 text-white",
   });
+  console.log(setData);
+
   return (
     <div className="bg-[#F3F4F6] rounded-lg shadow-md gap-6">
       <span className="text-sm sm:text-base p-3 sm:p-4 text-gray-800 font-medium flex flex-col">
