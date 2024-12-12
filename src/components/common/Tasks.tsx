@@ -1,18 +1,8 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { deleteTask } from "../../features/TaskSlice";
+import { deleteTask } from "../../store/TaskSlice";
 import { useDispatch } from "react-redux";
 import { Trash2 } from "lucide-react";
-const Tasks = ({ title, description, priority, newID }: any) => {
+const Tasks = ({ title, description, priority, id, status }: any) => {
   const dispatch = useDispatch();
-  const { attributes, listeners, setNodeRef, transform, transition, active } =
-    useSortable({ id: newID });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    cursor: active ? "grabbing" : "grab",
-  };
 
   const handleDelete = (newID: any) => {
     dispatch(deleteTask(newID));
@@ -20,12 +10,9 @@ const Tasks = ({ title, description, priority, newID }: any) => {
 
   return (
     <div
-      className="border bg-white rounded mt-2 p-2 cursor-grab"
-      key={newID}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
+      id={id}
+      data-status={status}
+      className=" border bg-white rounded mt-2 p-2 cursor-grab"
     >
       <div style={{ touchAction: "none" }}>
         <div className="capitalize">{title}</div>
@@ -49,7 +36,7 @@ const Tasks = ({ title, description, priority, newID }: any) => {
           <div>
             <button
               className=" hover:text-red-700"
-              onClick={() => handleDelete(newID)}
+              onClick={() => handleDelete(id)}
             >
               <Trash2 />
             </button>
