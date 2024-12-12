@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import AddTaskModal from "./AddTaskModal";
 import Navbar from "./Navbar";
