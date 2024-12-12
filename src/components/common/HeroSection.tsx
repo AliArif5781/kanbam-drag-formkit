@@ -5,7 +5,6 @@ import Navbar from "./Navbar";
 import { Link } from "react-router";
 
 const HeroSection = () => {
-  const dispatch = useDispatch();
   const projects = useSelector(
     (state: RootState) => state.ProjectValues.projects
   );
