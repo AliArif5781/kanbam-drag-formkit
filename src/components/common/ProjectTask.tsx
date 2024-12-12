@@ -1,136 +1,90 @@
-import { useParams } from "react-router";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../app/store";
-import { setTasksFromLocalStorage } from "../../features/TaskSlice";
-import {
-  closestCorners,
-  DndContext,
-  DragEndEvent,
-  MouseSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  rectSwappingStrategy,
-  SortableContext,
-} from "@dnd-kit/sortable";
-import Tasks from "./Tasks";
+import { useParams } from "react-router";
+import { RootState } from "../../store/store";
+import { setTasks, TaskStatus } from "../../store/TaskSlice";
+import AddTaskModal from "./AddTaskModal";
+import Navbar from "./Navbar";
+import TasksGroup from "./TasksGroup";
 
 const ProjectTask = () => {
-  const { id } = useParams();
-
+  const { id }: { id: number } = useParams() as any;
+  console.log(id);
   const dispatch = useDispatch();
+  const project = useMemo(() => {
+    const projects = JSON.parse(localStorage.getItem("Projects") as any) || [];
+    return projects.find((project: any) => project.id === id);
+  }, []);
 
-  const project = useSelector(
-    (state: RootState) => state.ProjectValues.selectedProject
-  );
-  const text = useSelector((state: RootState) => state.dialog.value);
   const tasks = useSelector((state: RootState) => state.task.tasks);
-  // console.log(tasks, "wholeDAta");
+  console.log(tasks);
 
-  // const handleToggle = () => {
-  //   dispatch(setDialog(true));
-  // };
+  const filteredTask = useMemo(() => {
+    return tasks.filter((task) => task.projectId === id);
+  }, [tasks]);
 
-  const filteredTask = tasks.filter((task) => task.iD === id);
+  const DraftTask = useMemo(() => {
+    return filteredTask.filter((task) => task.status === "draft");
+  }, [filteredTask]);
 
-  const getPosition = (id: any) => {
-    const tk = tasks.map((task) => task);
-    const position = tk.findIndex((task) => task.newID === id);
-    return position !== -1 ? position : -1;
+  const inProgressTask = useMemo(() => {
+    return filteredTask.filter((task) => task.status === "inProgress");
+  }, [filteredTask]);
+
+  const doneTask = useMemo(() => {
+    return filteredTask.filter((task) => task.status === "done");
+  }, [filteredTask]);
+
+  const onDragEnd = (id: string, status: TaskStatus) => {
+    const newTasks = [...tasks].map((task) => {
+      if (task.id == id) {
+        return {
+          ...task,
+          status,
+        };
+      }
+      return task;
+    });
+    localStorage.setItem("task", JSON.stringify(newTasks));
+    dispatch(setTasks(newTasks));
   };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    const originalPosition = getPosition(active?.id);
-    const latestPosition = getPosition(over?.id);
-
-    if (
-      originalPosition === -1 ||
-      latestPosition === -1 ||
-      originalPosition === latestPosition
-    ) {
-      return;
-    }
-
-    const reorderedTasks = arrayMove(tasks, originalPosition, latestPosition);
-
-    dispatch(setTasksFromLocalStorage(reorderedTasks));
-  };
-
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 10,
-      },
-    }),
-    useSensor(TouchSensor),
-    useSensor(MouseSensor)
-  );
   return (
     <div>
+      <Navbar
+        title={`projectTasks: ${project?.title}
+
+`}
+      >
+        <AddTaskModal isProject={false} />
+      </Navbar>
       <div>
         <div className="pt-4 sm:pt-5 md:pt-6">
-          <div className={`${text ? "blur-sm" : ""}`}>
+          <div>
             {project && (
               <div className="px-5" key={project.id}>
-                <h3 className="block text-xl font-semibold  ">
-                  Project:{" "}
-                  <span className="text-gray-700">{project.title}</span>{" "}
-                </h3>{" "}
-                {/* <button
-                  className=" bg-black-200 text-white p-2 my-2 hover:shadow-lg transition-all duration-300 ease-in-out rounded-lg"
-                  onClick={handleToggle}
-                >
-                  Create Task
-                </button> */}
-                <DndContext
-                  collisionDetection={closestCorners}
-                  onDragEnd={handleDragEnd}
-                  sensors={sensors}
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 w-full">
-                    {/* Draft */}
-
-                    <SortableContext
-                      items={tasks.map((item) => item.newID)}
-                      strategy={rectSwappingStrategy}
-                    >
-                      <div className="bg-[#F3F4F6] p-3 sm:p-4 rounded-lg shadow-md gap-6">
-                        <span className="text-sm sm:text-base text-gray-800 font-medium flex flex-col">
-                          Draft
-                          {filteredTask.length > 0
-                            ? tasks.map((task) => (
-                                <Tasks key={task.newID} {...task} />
-                              ))
-                            : ""}
-                        </span>
-                      </div>
-
-                      {/* In-progress */}
-
-                      <div className="bg-[#F3F4F6] p-3 sm:p-4 rounded-lg shadow-md gap-6">
-                        <span className="text-sm sm:text-base text-gray-800 font-medium flex flex-col">
-                          In-progress
-                        </span>
-                      </div>
-
-                      {/* Done */}
-
-                      <div className="bg-[#F3F4F6] p-3 sm:p-4 rounded-lg shadow-md gap-6">
-                        <span className="text-sm sm:text-base text-gray-800 font-medium flex flex-col">
-                          Done
-                        </span>
-                      </div>
-                    </SortableContext>
-                  </div>
-                </DndContext>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 w-full">
+                  <TasksGroup
+                    key={DraftTask.length}
+                    tasks={DraftTask}
+                    title="Draft"
+                    status="draft"
+                    onDragEnd={onDragEnd}
+                  />
+                  <TasksGroup
+                    key={inProgressTask.length}
+                    tasks={inProgressTask}
+                    title="inProgress"
+                    status="inProgress"
+                    onDragEnd={onDragEnd}
+                  />
+                  <TasksGroup
+                    key={doneTask.length}
+                    tasks={doneTask}
+                    title="done"
+                    status="done"
+                    onDragEnd={onDragEnd}
+                  />
+                </div>
               </div>
             )}
           </div>
